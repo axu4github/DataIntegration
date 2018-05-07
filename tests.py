@@ -661,8 +661,12 @@ class TestProcessor(unittest.TestCase):
             "speedresultb": null
         }
         """
-        content = [json.loads(content.strip())]
-        (_, incorrects, _) = Processor().transform_btsm_vindex(content)
+        _attrs = {
+            "absolute.path": os.path.join(
+                Config.TESTS_DIR, "resources", "BTSM"),
+            "filename": "20180424_index.txt",
+        }
+        (_, incorrects, _) = Processor().transform_btsm_vindex(content, _attrs)
         incorrects = json.loads(incorrects)
 
         ignore_fields = ["start_time", "end_time",
@@ -717,9 +721,13 @@ class TestProcessor(unittest.TestCase):
             "speedresultb" : null
         }
         """
-        content = [json.loads(content.strip())]
+        _attrs = {
+            "absolute.path": os.path.join(
+                Config.TESTS_DIR, "resources", "BTSM"),
+            "filename": "20180424_index.txt",
+        }
         (_, incorrects, _) = Processor().transform_btsm_vindex(
-            content)
+            content, _attrs)
         incorrects = json.loads(incorrects)
         errors = incorrects[0]["errors"].split(Config.ERROR_SEPARATOR)
         error_message = errors[0].split(Config.ERROR_MESSAGE_SEPARATOR)
@@ -772,8 +780,12 @@ class TestProcessor(unittest.TestCase):
             "speedresultb": null
         }
         """
-        content = [json.loads(content.strip())]
-        (_, incorrects, _) = Processor().transform_btsm_vindex(content)
+        _attrs = {
+            "absolute.path": os.path.join(
+                Config.TESTS_DIR, "resources", "BTSM"),
+            "filename": "20180424_index.txt",
+        }
+        (_, incorrects, _) = Processor().transform_btsm_vindex(content, _attrs)
         incorrects = json.loads(incorrects)
         errors = incorrects[0]["errors"].split(Config.ERROR_SEPARATOR)
         error_message = errors[0].split(Config.ERROR_MESSAGE_SEPARATOR)
@@ -782,7 +794,7 @@ class TestProcessor(unittest.TestCase):
 
     def test_validate_btsm_sttr_file(self):
         fpath = os.path.join(Config.TESTS_DIR, "resources",
-                             "BTSM", "20180424文本.txt")
+                             "BTSM", "20180424_sttr.txt")
         (is_error, errors) = Processor().validate_btsm_sttr_file(fpath)
 
         self.assertTrue(is_error)
@@ -959,7 +971,7 @@ class TestUtils(unittest.TestCase):
 
     def test_get_thinkitfile_to_dict(self):
         fspeed = os.path.join(
-            Config.TESTS_DIR, "resources", "BTSM", "20180424文本.txt")
+            Config.TESTS_DIR, "resources", "BTSM", "20180424_sttr.txt")
         dict_fspeeds = Utils.get_thinkitfile_speed_to_dict(fspeed)
 
         self.assertEqual(1, len(dict_fspeeds))

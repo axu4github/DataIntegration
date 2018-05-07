@@ -94,12 +94,23 @@ class Processor(LoggableMixin):
             return ProcessorResponse(corrects=_json)._print()
 
     def transform_btsm_vindex(self, content, _attrs=None):
-        corrects, incorrects = [], []
-        self.logger.info(len(content))
+        corrects, incorrects, fpath = [], [], ""
+        if content is not None:
+            content = json.loads(content)
+            if not isinstance(content, list):
+                content = [content]
+
         if not Utils.jsonobj_isempty(content):
-            self.logger.debug(content[0])
-            fpath = os.path.join(
-                Config.TESTS_DIR, "resources", "BTSM", "20180424文本.txt")
+            if "absolute.path" in _attrs and "filename" in _attrs:
+                fpath = os.path.join(
+                    _attrs["absolute.path"],
+                    _attrs["filename"].replace("index", "sttr"))
+
+            self.logger.info(
+                "INDEX File Path: {0}".format(
+                    os.path.join(_attrs["absolute.path"], _attrs["filename"])))
+            self.logger.info("STTR File Path: {0}".format(fpath))
+
             sttrs = Utils.get_thinkitfile_speed_to_dict(fpath)
             for (i, findex) in list(enumerate(content)):
                 self.logger.info("Processing {0} File.".format(i))
