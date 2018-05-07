@@ -189,7 +189,7 @@ class Processor(LoggableMixin):
                 attrs["batch"] = attrs["date"]
                 break
             else:
-                raise Exception("start_time or area_of_job is Empty.")
+                raise ArgumentsError("start_time or area_of_job is Empty.")
 
         if "recorddate" in attrs and attrs["recorddate"] != "":
             cmd = Config.CREATE_HIVE_PARTITIONS_COMMAND_PATTERN.format(
@@ -202,7 +202,7 @@ class Processor(LoggableMixin):
 
         for (k, v) in attrs.items():
             if v == "":
-                raise Exception("create_partition attrs value is Empty.")
+                raise ArgumentsError("create_partition attrs value is Empty.")
 
         return ProcessorResponse(corrects=content, attributes=attrs)._print()
 
