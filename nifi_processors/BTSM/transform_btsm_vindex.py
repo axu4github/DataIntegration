@@ -4,7 +4,7 @@ from org.apache.nifi.processor.io import (
     InputStreamCallback, OutputStreamCallback
 )
 from processor import Processor
-import json
+from utils import Utils
 
 ###############################################################################
 # Variables provided in scope by script engine:
@@ -43,12 +43,12 @@ class InputStream(InputStreamCallback):
     def process(self, inputStream):
         content = IOUtils.toString(inputStream, StandardCharsets.UTF_8)
         (corrects, incorrects, attributes) = Processor().transform_btsm_vindex(
-            json.loads(content), self._attrs)
+            content, self._attrs)
         self._transfer(corrects, attributes, _succ)
         self._transfer(incorrects, attributes, _fail)
 
     def _transfer(self, _content, _attributes, _relationship):
-        if _content is not None:
+        if not Utils.isempty(_content):
             _flowfile = self._session.create(self.flowfile)
             _flowfile = self._session.write(_flowfile, OutputStream(_content))
             if _attributes is not None:
