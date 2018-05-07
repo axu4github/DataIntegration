@@ -43,7 +43,7 @@ class Config(object):
     HIVE_TABLE_LOCATION = "/user/hive/warehouse/%s.db/%s/{%s}" % (
         HIVE_CONFS["db"], HIVE_TABLE, HIVE_TABLE_PATTERN_FIELD)
 
-    HIVE_CREATE_PARTITIONS_SQL = "ATLER TABLE %s ADD IF NOT EXISTS PARTITION (%s='{%s}') LOCATION '%s'" % (
+    HIVE_CREATE_PARTITIONS_SQL = "ALTER TABLE %s ADD IF NOT EXISTS PARTITION (%s='{%s}') LOCATION '%s'" % (
         HIVE_TABLE,
         HIVE_TABLE_PATTERN_FIELD,
         HIVE_TABLE_PATTERN_FIELD,

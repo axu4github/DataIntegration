@@ -1481,5 +1481,12 @@ class TestBTSMIndex(unittest.TestCase):
                 self.assertEqual(value, _index[field])
 
 
+class TestConfig(unittest.TestCase):
+
+    def test_create_partition_conf(self):
+        self.assertEqual(
+            Config.HIVE_CREATE_PARTITIONS_SQL[0:11], "ALTER TABLE")
+
+
 if __name__ == "__main__":
     unittest.main()
