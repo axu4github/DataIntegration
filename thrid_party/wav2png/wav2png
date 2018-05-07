@@ -1,0 +1,18 @@
+#!/bin/sh
+
+INPUT=$1
+OUTPUT=$2
+CURRENT_DIR=`dirname $0`
+RUNNER=`which java`
+
+if [ -d ${INPUT} ]; then
+	mkdir -p ${OUTPUT}
+	for input_filepath in `find ${INPUT} -name "*.wav"`
+	do
+		filename=`basename ${input_filepath}`
+		output_filepath=${OUTPUT}/${filename}".png"
+		command="${RUNNER} -jar ${CURRENT_DIR}/CreateWaveform.jar ${input_filepath} ${output_filepath}"
+		echo ${command}
+		${command}
+	done
+fi
