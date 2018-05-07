@@ -4,6 +4,7 @@ from utils import Utils
 from loggings import LoggableMixin
 from indexs.base_index import BaseIndex
 from indexs.hd_index import HDIndex
+from indexs.btsm_index import BTSMIndex
 from indexs.hd_policy_index import HDPolicyIndex
 from stt_parsers.tencent_stt_parser import TencentSTTParser
 from stt_parsers.thinkit_stt_parser import ThinkitSTTParser
@@ -114,7 +115,7 @@ class Processor(LoggableMixin):
             sttrs = Utils.get_thinkitfile_speed_to_dict(fpath)
             for (i, findex) in list(enumerate(content)):
                 self.logger.info("Processing {0} File.".format(i))
-                _index = BaseIndex(is_serialized=False, data=findex)
+                _index = BTSMIndex(is_serialized=False, data=findex)
                 fname = _index._get("filename").lower()
                 if fname in sttrs:
                     sttr = sttrs[fname]

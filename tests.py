@@ -6,6 +6,7 @@ from fields.base_field import BaseField
 from fields.hd_field import HDField
 from indexs.base_index import BaseIndex
 from indexs.hd_index import HDIndex
+from indexs.btsm_index import BTSMIndex
 from stt_parsers.tencent_stt_parser import TencentSTTParser
 from stt_parsers.thinkit_stt_parser import ThinkitSTTParser
 from confs.configs import Config
@@ -1475,10 +1476,13 @@ class TestBTSMIndex(unittest.TestCase):
 
     def test_index(self):
         findex = json.loads(self.findex.strip())
-        _index = BaseIndex(data=findex, is_serialized=False)._print()
+        _index = BTSMIndex(data=findex, is_serialized=False)._print()
+
         for field, value in findex.items():
             if field not in ["start_time", "end_time", "id"]:
                 self.assertEqual(value, _index[field])
+
+        self.assertEqual(_index["handledfilename"], "b")
 
 
 class TestConfig(unittest.TestCase):
