@@ -2,7 +2,6 @@
 
 from utils import Utils
 from loggings import LoggableMixin
-from indexs.base_index import BaseIndex
 from indexs.hd_index import HDIndex
 from indexs.btsm_index import BTSMIndex
 from indexs.hd_policy_index import HDPolicyIndex
