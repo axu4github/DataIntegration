@@ -423,6 +423,36 @@ class TestProcessor(unittest.TestCase):
         self.assertTrue(corrects is not None)
         self.assertTrue(incorrects is None)
 
+    def test_bug_exists_sttr_size_is_0_but_none_errors(self):
+        """
+        测试BUG：有语音识别结果文件，结果文件大小为0，但是没有错误信息。
+        """
+        self.base_dir = "./tests/resources"
+        sttr_dirs = {
+            "speed": os.path.join(self.base_dir, "speed"),
+            "interrupt": os.path.join(self.base_dir, "interrupt"),
+            "blankinfo": os.path.join(self.base_dir, "blankinfo")
+        }
+
+        mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
+        mapping_data["DOCUMENTPATH"] = "0_size_voice.wav"
+        attrs = {
+            "mapping_data": mapping_data,
+            "fname_field": "DOCUMENTPATH",
+            "sttr_dirs": sttr_dirs
+        }
+
+        (corrects, incorrects, _) = Processor().transform_vindex(
+            attrs=attrs)
+        corrects = json.loads(corrects)
+        incorrects = json.loads(incorrects)
+        errors = incorrects["errors"].split(Config.ERROR_SEPARATOR)
+        error_message = errors[0].split(Config.ERROR_MESSAGE_SEPARATOR)
+
+        self.assertTrue(corrects is None)
+        self.assertTrue(incorrects is not None)
+        self.assertEqual(-11, int(error_message[-1]))
+
     def test_transform_policy_index(self):
         str_data = """
         {
