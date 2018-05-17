@@ -32,7 +32,7 @@ class Utils(object):
 
     @staticmethod
     def jsonobj_isempty(jsonobj):
-        return jsonobj in [{}, []]
+        return jsonobj in [{}, [], [{}]]
 
     @staticmethod
     def extract_fname(filepath):

@@ -262,12 +262,20 @@ class TestProcessor(unittest.TestCase):
         content = "{}"
         (corrects, incorrects, _) = Processor().validate_vindex(content)
         self.assertEqual((corrects, incorrects),
-                         (json.dumps(None), content))
+                         (json.dumps(None), '[{}]'))
 
         content = '[{"foo": "bar"}]'
         (corrects, incorrects, _) = Processor().validate_vindex(content)
         self.assertEqual((corrects, incorrects),
                          (content, json.dumps(None)))
+
+    def test_validate_vindex_single_data(self):
+        """ 测试单个Json对象，经过索引校验后是否会变成Json数组 """
+        content = '{"foo": "bar"}'
+        (corrects, incorrects, _) = Processor().validate_vindex(content)
+
+        self.assertEqual((corrects, incorrects),
+                         ('[{"foo": "bar"}]', json.dumps(None)))
 
     def test_transform_vindex_correct(self):
         attrs = {
@@ -881,6 +889,11 @@ class TestUtils(unittest.TestCase):
         self.blankinfo_fdir = os.path.join(self.base_dir, "blankinfo")
         self.incorrect_fpath = os.path.join(self.base_dir,
                                             "filesize_error.file")
+
+    def test_jsonobj_isempty(self):
+        """ 测试工具类的jsonobj_isempty方法 """
+        self.assertTrue(Utils.jsonobj_isempty(json.loads("{}")))
+        self.assertTrue(Utils.jsonobj_isempty(json.loads("[{}]")))
 
     def test_extract_filename(self):
         fname = Utils.extract_fname(__file__)

@@ -48,7 +48,12 @@ class Processor(LoggableMixin):
 
     def validate_vindex(self, content=None, attrs=None):
         corrects, incorrects = None, None
-        content = json.loads(content.strip())
+        # 为了校验之后的数据拆分，把所有输入的Json对象都转化为Json数组
+        if content is not None:
+            content = json.loads(content.strip())
+            if not isinstance(content, list):
+                content = [content]
+
         if not Utils.jsonobj_isempty(content):
             corrects = content
         else:
