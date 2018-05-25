@@ -408,6 +408,25 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual("kf1-20180403.wav", incorrects["id"])
         self.assertEqual("20180403.wav", incorrects["filename"])
 
+    def test_transform_vindex_arrs(self):
+        mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
+        attrs = {
+            "mapping_fields": self.mapping_fields,
+            "mapping_data": mapping_data
+        }
+        (corrects, incorrects, _) = Processor().transform_vindex_arr(
+            attrs=attrs)
+        corrects = json.loads(corrects)[0]
+        incorrects = json.loads(incorrects)
+
+        self.assertTrue(incorrects is None)
+        self.assertTrue(corrects is not None)
+        self.assertEqual("1522710384000", corrects["end_time"])
+        self.assertEqual("1522710229000", corrects["start_time"])
+        self.assertEqual("呼入", corrects["calltype"])
+        self.assertEqual("kf1-20180403.wav", corrects["id"])
+        self.assertEqual("20180403.wav", corrects["filename"])
+
     def test_transfer_vindex_sttr(self):
         self.base_dir = "./tests/resources"
         sttr_dirs = {

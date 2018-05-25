@@ -98,6 +98,25 @@ class Processor(LoggableMixin):
         else:
             return ProcessorResponse(corrects=_json)._print()
 
+    def transform_vindex_arr(self, content=None, attrs=None):
+        result = []
+        if not Utils.jsonobj_isempty(attrs):
+            # attrs = json.loads(attrs)
+            if not isinstance(attrs, list):
+                attrs = [attrs]
+
+            for attr in attrs:
+                (corrects, incorrects, _) = self.transform_vindex(attrs=attr)
+                corrects = json.loads(corrects)
+                if corrects is not None:
+                    content = corrects
+                else:
+                    content = json.loads(incorrects)
+
+                result.append(content)
+
+        return ProcessorResponse(corrects=result)._print()
+
     def transform_btsm_vindex(self, content, _attrs=None):
         corrects, incorrects, fpath = [], [], ""
         if content is not None:
