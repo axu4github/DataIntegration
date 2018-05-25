@@ -101,19 +101,32 @@ class Processor(LoggableMixin):
     def transform_vindex_arr(self, content=None, attrs=None):
         result = []
         if not Utils.jsonobj_isempty(attrs):
-            # attrs = json.loads(attrs)
-            if not isinstance(attrs, list):
-                attrs = [attrs]
+            if "mapping_datas" in attrs and attrs["mapping_datas"] is not None:
+                mapping_datas = attrs["mapping_datas"]
+                if not isinstance(mapping_datas, list):
+                    mapping_datas = [mapping_datas]
 
-            for attr in attrs:
-                (corrects, incorrects, _) = self.transform_vindex(attrs=attr)
-                corrects = json.loads(corrects)
-                if corrects is not None:
-                    content = corrects
-                else:
-                    content = json.loads(incorrects)
+                for mapping_data in mapping_datas:
+                    attr = {
+                        "mapping_data": mapping_data,
+                        "mapping_fields": attrs["mapping_fields"],
+                    }
 
-                result.append(content)
+                    if "fname_field" in attrs:
+                        attr["fname_field"] = attrs["fname_field"]
+
+                    if "sttr_dirs" in attrs:
+                        attrs["sttr_dirs"] = attrs["sttr_dirs"]
+
+                    (corrects, incorrects, _) = self.transform_vindex(
+                        attrs=attr)
+                    corrects = json.loads(corrects)
+                    if corrects is not None:
+                        content = corrects
+                    else:
+                        content = json.loads(incorrects)
+
+                    result.append(content)
 
         return ProcessorResponse(corrects=result)._print()
 

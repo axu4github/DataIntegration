@@ -412,7 +412,7 @@ class TestProcessor(unittest.TestCase):
         mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
         attrs = {
             "mapping_fields": self.mapping_fields,
-            "mapping_data": mapping_data
+            "mapping_datas": mapping_data
         }
         (corrects, incorrects, _) = Processor().transform_vindex_arr(
             attrs=attrs)
@@ -432,7 +432,7 @@ class TestProcessor(unittest.TestCase):
         del mapping_data["PH_MOBILE"]
         attrs = {
             "mapping_fields": self.mapping_fields,
-            "mapping_data": mapping_data
+            "mapping_datas": mapping_data
         }
         (corrects, incorrects, _) = Processor().transform_vindex_arr(
             attrs=attrs)
