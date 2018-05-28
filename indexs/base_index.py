@@ -131,7 +131,7 @@ class BaseIndex(JsonSerializer, LoggableMixin):
            self._isset_and_notdefault("filename"):
             self._set("id", "{0}-{1}".format(
                 self._get("area_of_job").lower(),
-                self._get("filename").lower()))
+                self._get("filename")))
 
         return self
 

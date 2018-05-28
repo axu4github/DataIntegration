@@ -294,6 +294,34 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual("kf1-20180403.wav", corrects["id"])
         self.assertEqual("20180403.wav", corrects["filename"])
 
+    def test_full_transform_vindex_(self):
+        """
+        测试归集任务语音文件索引 id, filename 大小写问题
+        - id => area_of_job（转小写）+ filename（不转大小写）
+        - filename（不转大小写）
+        """
+        data = """
+        {
+            "AREA_OF_JOB": "kf",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306002941100086900007_ASDASDB.wav"
+        }
+        """
+        attrs = {
+            "mapping_data": json.loads(data.strip()),
+            "mapping_fields": Config.HD_MAPPING_FEILDS,
+            "fname_field": Config.HD_FILENAME_FIELD,
+            "sttr_dirs": Config.HD_STTR_DIRS,
+        }
+
+        (_, incorrects, _) = Processor().transform_vindex(
+            attrs=attrs)
+        incorrects = json.loads(incorrects)
+
+        self.assertEqual(
+            "kf-20180306002941100086900007_ASDASDB.wav", incorrects["id"])
+        self.assertEqual(
+            "20180306002941100086900007_ASDASDB.wav", incorrects["filename"])
+
     def test_full_transform_vindex(self):
         data = """
         {
