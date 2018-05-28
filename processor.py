@@ -379,10 +379,8 @@ class Processor(LoggableMixin):
         errors = []
         dict_sttrs = Utils.get_thinkitfile_speed_to_dict(fpath)
         for (fname, speed_sttr) in dict_sttrs.items():
-            try:
-                ThinkitSTTParser().parse({"speed": speed_sttr})
-            except Exception as e:
-                errors.append("Filename: {0} {1}".format(fname, str(e)))
+            sttr = ThinkitSTTParser().parse({"speed": speed_sttr})
+            errors += sttr["stt_pares_errors"]
 
         return (len(errors) > 0, errors)
 

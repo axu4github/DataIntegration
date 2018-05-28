@@ -24,19 +24,30 @@ class BaseSTTParser(object):
             return ""
 
     def parse(self, content):
+        stt_pares_errors = []
         sttr = {}
-        if "speed" in content:
-            speed = self.parse_speed(content["speed"])
-            sttr = dict(sttr, **speed)
+        try:
+            if "speed" in content:
+                speed = self.parse_speed(content["speed"])
+                sttr = dict(sttr, **speed)
+        except Exception as e:
+            stt_pares_errors.append(e)
 
-        if "interrupt" in content:
-            interrupt = self.parse_interrupt(content["interrupt"])
-            sttr = dict(sttr, **interrupt)
+        try:
+            if "interrupt" in content:
+                interrupt = self.parse_interrupt(content["interrupt"])
+                sttr = dict(sttr, **interrupt)
+        except Exception as e:
+            stt_pares_errors.append(e)
 
-        if "blankinfo" in content:
-            blankinfo = self.parse_blankinfo(content["blankinfo"])
-            sttr = dict(sttr, **blankinfo)
+        try:
+            if "blankinfo" in content:
+                blankinfo = self.parse_blankinfo(content["blankinfo"])
+                sttr = dict(sttr, **blankinfo)
+        except Exception as e:
+            stt_pares_errors.append(e)
 
+        sttr["stt_pares_errors"] = stt_pares_errors
         return sttr
 
     @abstractmethod

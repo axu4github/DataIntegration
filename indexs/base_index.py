@@ -178,6 +178,13 @@ class BaseIndex(JsonSerializer, LoggableMixin):
                 raise STTParserIsNotExtendBaseSTTParserError()
 
             sttr = stt_parser.parse(content)
+            if "stt_pares_errors" in sttr:
+                if len(sttr["stt_pares_errors"]) > 0:
+                    for stt_pares_error in sttr["stt_pares_errors"]:
+                        self._set_error(stt_pares_error)
+
+                del sttr["stt_pares_errors"]
+
             for (field, value) in sttr.items():
                 if field in self.stt_fields and not Utils.isempty(value):
                     self._set(field, value)

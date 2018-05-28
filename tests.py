@@ -1540,7 +1540,7 @@ class TestTencentSTTParser(unittest.TestCase):
     def test_parse_null(self):
         content = {}
         sttr = TencentSTTParser().parse(content)
-        self.assertEqual(sttr, content)
+        self.assertEqual(sttr, {'stt_pares_errors': []})
 
     def test_parse_exists_field(self):
         content = {
@@ -1556,7 +1556,7 @@ class TestTencentSTTParser(unittest.TestCase):
                                 'emovaluea': '', 'maxblanklen': 0,
                                 'blankinfo': '', 'emotiona': '',
                                 'robspeedb': '', 'robspeeda': '',
-                                'emotionb': ''})
+                                'emotionb': '', 'stt_pares_errors': []})
 
     def test_parse(self):
         content = {
@@ -1593,7 +1593,7 @@ class TestTencentSTTParser(unittest.TestCase):
 
         self.assertEqual(13, len(sttr["plaintexta"].split(";")))
         self.assertEqual(8, len(sttr["plaintextb"].split(";")))
-        self.assertEqual(15, len(sttr))
+        self.assertEqual(16, len(sttr))  # 多一个 sttr_parse_errors
 
     def test_parse_speed(self):
         """
@@ -1604,7 +1604,7 @@ class TestTencentSTTParser(unittest.TestCase):
                 "0.98 5.46 嗯嗯嗯。 客户 [Neu] 0.91 0.00 0.98 2.72 0.89",
                 "1.87 5.55 --- 坐席 [Neu] 0.69 0.00 -- -- 5.43"
             ],
-            "blankinfo": "",
+            "blankinfo": "0N^H^j+",
             "interrupt": []
         }
         sttr = TencentSTTParser().parse(content)
@@ -1614,6 +1614,7 @@ class TestTencentSTTParser(unittest.TestCase):
         self.assertEqual(2, len(sttr["plaintextb"].split(";")))
         self.assertEqual(2, len(sttr["speedresulta"].split(";")))
         self.assertEqual(2, len(sttr["speedresultb"].split(";")))
+        self.assertEqual(1, len(sttr["stt_pares_errors"]))
 
 
 class TestThinkitSTTParser(unittest.TestCase):
