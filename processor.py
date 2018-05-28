@@ -89,12 +89,12 @@ class Processor(LoggableMixin):
                     os.path.basename("{0}.txt".format(fname)),
                     attrs["sttr_dirs"])
 
-                if "errors" in sttr:
-                    if len(sttr["errors"]) > 0:
-                        for err in sttr["errors"]:
+                if "sttr_errors" in sttr:
+                    if len(sttr["sttr_errors"]) > 0:
+                        for err in sttr["sttr_errors"]:
                             _index._set_error(err)
 
-                    del sttr["errors"]
+                    del sttr["sttr_errors"]
 
                 _index.update_sttr(sttr, TencentSTTParser())
             except BaseError as e:
@@ -124,7 +124,7 @@ class Processor(LoggableMixin):
                         attr["fname_field"] = attrs["fname_field"]
 
                     if "sttr_dirs" in attrs:
-                        attrs["sttr_dirs"] = attrs["sttr_dirs"]
+                        attr["sttr_dirs"] = attrs["sttr_dirs"]
 
                     (corrects, incorrects, _) = self.transform_vindex(
                         attrs=attr)

@@ -82,14 +82,14 @@ class Utils(object):
 
     @staticmethod
     def extract_stt_from_file(fname, fdirs):
-        errors = []
+        sttr_errors = []
         try:
             speed_sttr = []
             if "speed" in fdirs:
                 speed_sttr = Utils.extract_speed_stt_from_file(
                     fname, os.path.join(fdirs["speed"], fname))
         except BaseError as e:
-            errors.append(e)
+            sttr_errors.append(e)
 
         try:
             interrupt_sttr = []
@@ -97,7 +97,7 @@ class Utils(object):
                 interrupt_sttr = Utils.extract_interrupt_stt_from_file(
                     fname, os.path.join(fdirs["interrupt"], fname))
         except BaseError as e:
-            errors.append(e)
+            sttr_errors.append(e)
 
         try:
             blankinfo_sttr = ""
@@ -105,10 +105,10 @@ class Utils(object):
                 blankinfo_sttr = Utils.extract_blankinfo_stt_from_file(
                     fname, os.path.join(fdirs["blankinfo"], fname))
         except BaseError as e:
-            errors.append(e)
+            sttr_errors.append(e)
 
         return {
-            "errors": errors,
+            "sttr_errors": sttr_errors,
             "speed": speed_sttr,
             "interrupt": interrupt_sttr,
             "blankinfo": blankinfo_sttr
