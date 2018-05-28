@@ -379,6 +379,7 @@ class TestProcessor(unittest.TestCase):
             attrs=attrs)
         corrects = json.loads(corrects)
         incorrects = json.loads(incorrects)
+
         errors = incorrects["errors"].split(Config.ERROR_SEPARATOR)
         error_message = errors[0].split(Config.ERROR_MESSAGE_SEPARATOR)
 
@@ -474,6 +475,35 @@ class TestProcessor(unittest.TestCase):
         self.assertTrue(corrects is not None)
         self.assertTrue(incorrects is None)
 
+    def test_transfer_vindex_sttr_two_sttr_errors(self):
+        """
+        测试提取语音识别数据时，只有其中两个识别结果文件有内容，另外一个识别结果文件没内容
+        """
+        self.base_dir = "./tests/resources"
+        sttr_dirs = {
+            "speed": os.path.join(self.base_dir, "speed"),
+            "interrupt": os.path.join(self.base_dir, "interrupt"),
+            "blankinfo": os.path.join(self.base_dir, "blankinfo")
+        }
+        mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
+        mapping_data["DOCUMENTPATH"] = "20180403090753100035900741.wav"
+        attrs = {
+            "mapping_data": mapping_data,
+            "fname_field": "DOCUMENTPATH",
+            "sttr_dirs": sttr_dirs
+        }
+
+        (corrects, incorrects, _) = Processor().transform_vindex(
+            attrs=attrs)
+        corrects = json.loads(corrects)
+        incorrects = json.loads(incorrects)
+
+        self.assertTrue(corrects is None)
+        self.assertTrue(incorrects is not None)
+        self.assertEqual(
+            2, len(incorrects["errors"].split(Config.ERROR_SEPARATOR)))
+        self.assertEqual(6, len(incorrects["plaintexta"].split(";")))
+
     def test_bug_exists_sttr_size_is_0_but_none_errors(self):
         """
         测试BUG：有语音识别结果文件，结果文件大小为0，但是没有错误信息。
@@ -503,6 +533,7 @@ class TestProcessor(unittest.TestCase):
         self.assertTrue(corrects is None)
         self.assertTrue(incorrects is not None)
         self.assertEqual(-11, int(error_message[-1]))
+        self.assertEqual(3, len(errors))
 
     def test_transform_policy_index(self):
         str_data = """
@@ -1043,6 +1074,19 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(8, len(sttrs["speed"]))
         self.assertEqual(8, len(sttrs["interrupt"]))
         self.assertEqual(27, len(json.loads(sttrs["blankinfo"])))
+
+    def test_extract_stt_from_file_multiple_errors(self):
+        """
+        测试提取语音识别结果内容时，多个错误情况
+        """
+        fname = "123123123123"
+        fdirs = {
+            "speed": self.speed_fdir,
+            "interrupt": self.interrupt_fdir,
+            "blankinfo": self.blankinfo_fdir,
+        }
+        sttrs = Utils.extract_stt_from_file(fname, fdirs)
+        self.assertEqual(3, len(sttrs["errors"]))
 
     def test_append_suffix_not_exists(self):
         self.assertEqual("/123/", Utils.append_suffix_not_exists("/123", "/"))

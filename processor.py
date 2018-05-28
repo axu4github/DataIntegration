@@ -88,6 +88,14 @@ class Processor(LoggableMixin):
                 sttr = Utils.extract_stt_from_file(
                     os.path.basename("{0}.txt".format(fname)),
                     attrs["sttr_dirs"])
+
+                if "errors" in sttr:
+                    if len(sttr["errors"]) > 0:
+                        for err in sttr["errors"]:
+                            _index._set_error(err)
+
+                    del sttr["errors"]
+
                 _index.update_sttr(sttr, TencentSTTParser())
             except BaseError as e:
                 _index._set_error(e)

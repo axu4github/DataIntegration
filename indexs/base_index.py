@@ -98,7 +98,8 @@ class BaseIndex(JsonSerializer, LoggableMixin):
             errors = [error_message]
         else:
             errors = self._get(self.error_field).split(
-                Config.ERROR_SEPARATOR).append(error_message)
+                Config.ERROR_SEPARATOR)
+            errors.append(error_message)
 
         self._set(self.error_field, Config.ERROR_SEPARATOR.join(errors))
 

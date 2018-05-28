@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 from errors import (
+    BaseError,
     FileNotContentError,
     FileNotFoundError,
     ArgumentsError
@@ -81,22 +82,33 @@ class Utils(object):
 
     @staticmethod
     def extract_stt_from_file(fname, fdirs):
-        speed_sttr = []
-        if "speed" in fdirs:
-            speed_sttr = Utils.extract_speed_stt_from_file(
-                fname, os.path.join(fdirs["speed"], fname))
+        errors = []
+        try:
+            speed_sttr = []
+            if "speed" in fdirs:
+                speed_sttr = Utils.extract_speed_stt_from_file(
+                    fname, os.path.join(fdirs["speed"], fname))
+        except BaseError as e:
+            errors.append(e)
 
-        interrupt_sttr = []
-        if "interrupt" in fdirs:
-            interrupt_sttr = Utils.extract_interrupt_stt_from_file(
-                fname, os.path.join(fdirs["interrupt"], fname))
+        try:
+            interrupt_sttr = []
+            if "interrupt" in fdirs:
+                interrupt_sttr = Utils.extract_interrupt_stt_from_file(
+                    fname, os.path.join(fdirs["interrupt"], fname))
+        except BaseError as e:
+            errors.append(e)
 
-        blankinfo_sttr = ""
-        if "blankinfo" in fdirs:
-            blankinfo_sttr = Utils.extract_blankinfo_stt_from_file(
-                fname, os.path.join(fdirs["blankinfo"], fname))
+        try:
+            blankinfo_sttr = ""
+            if "blankinfo" in fdirs:
+                blankinfo_sttr = Utils.extract_blankinfo_stt_from_file(
+                    fname, os.path.join(fdirs["blankinfo"], fname))
+        except BaseError as e:
+            errors.append(e)
 
         return {
+            "errors": errors,
             "speed": speed_sttr,
             "interrupt": interrupt_sttr,
             "blankinfo": blankinfo_sttr
