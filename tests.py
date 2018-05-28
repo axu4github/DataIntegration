@@ -294,7 +294,7 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual("kf1-20180403.wav", corrects["id"])
         self.assertEqual("20180403.wav", corrects["filename"])
 
-    def test_full_transform_vindex_(self):
+    def test_full_transform_vindex_id_case(self):
         """
         测试归集任务语音文件索引 id, filename 大小写问题
         - id => area_of_job（转小写）+ filename（不转大小写）
@@ -1551,7 +1551,7 @@ class TestTencentSTTParser(unittest.TestCase):
         sttr = TencentSTTParser().parse(content)
         self.assertEqual(sttr, {'tonea': '', 'toneb': '',
                                 'plaintexta': '', 'plaintextb': '',
-                                'speeda': '', 'speedb': '',
+                                'speedresulta': '', 'speedresultb': '',
                                 'maxstartblankpos': 0, 'emovalueb': '',
                                 'emovaluea': '', 'maxblanklen': 0,
                                 'blankinfo': '', 'emotiona': '',
@@ -1594,6 +1594,26 @@ class TestTencentSTTParser(unittest.TestCase):
         self.assertEqual(13, len(sttr["plaintexta"].split(";")))
         self.assertEqual(8, len(sttr["plaintextb"].split(";")))
         self.assertEqual(15, len(sttr))
+
+    def test_parse_speed(self):
+        """
+        测试解析语速
+        """
+        content = {
+            "speed": [
+                "0.98 5.46 嗯嗯嗯。 客户 [Neu] 0.91 0.00 0.98 2.72 0.89",
+                "1.87 5.55 --- 坐席 [Neu] 0.69 0.00 -- -- 5.43"
+            ],
+            "blankinfo": "",
+            "interrupt": []
+        }
+        sttr = TencentSTTParser().parse(content)
+
+        # 程序会在最后一位补一个 ";" 号
+        self.assertEqual(2, len(sttr["plaintexta"].split(";")))
+        self.assertEqual(2, len(sttr["plaintextb"].split(";")))
+        self.assertEqual(2, len(sttr["speedresulta"].split(";")))
+        self.assertEqual(2, len(sttr["speedresultb"].split(";")))
 
 
 class TestThinkitSTTParser(unittest.TestCase):

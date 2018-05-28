@@ -62,8 +62,8 @@ class TencentSTTParser(BaseSTTParser):
             "emovalueb": self._format(emotionvalueb),
             "tonea": self._format(tonea),
             "toneb": self._format(toneb),
-            "speeda": self._format(speeda),
-            "speedb": self._format(speedb),
+            "speedresulta": self._format(speeda),
+            "speedresultb": self._format(speedb),
         }
 
     def parse_interrupt(self, content):
