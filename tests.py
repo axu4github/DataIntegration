@@ -208,7 +208,7 @@ class TestProcessor(unittest.TestCase):
             "CALLINFO": "-",
             "STARTTIME": "2018-03-05 09:01:48.0",
             "ENDTIME": "2018-03-05 09:04:35.0",
-            "STIME": "-",
+            "STIME": "0.0",
             "STAFF_ID": "-",
             "AGENT_ID": "-",
             "STAFFNAME": "-",
@@ -337,7 +337,7 @@ class TestProcessor(unittest.TestCase):
             "POLAPPLYAGE": null,
             "OBJECTIVELEVEL": "99",
             "DNIS": "8-0",
-            "STIME": "1-6",
+            "STIME": "1.6",
             "OBJECTIVETYPE": "---",
             "OBJECTIVETYPEID": "H-1",
             "DOCUMENTPATH": "ftp://-/2018_03_06/20180306002941100086900007.wav",
@@ -436,6 +436,35 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual("呼入", incorrects["calltype"])
         self.assertEqual("kf1-20180403.wav", incorrects["id"])
         self.assertEqual("20180403.wav", incorrects["filename"])
+
+    def test_transform_vindex_duration_round(self):
+        """
+        测试duration(stime)四合五入转整型
+        """
+        mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
+        # 四舍
+        mapping_data["STIME"] = "155.4444444444444444"
+        attrs = {
+            "mapping_fields": self.mapping_fields,
+            "mapping_data": mapping_data
+        }
+        (corrects, _, _) = Processor().transform_vindex(
+            attrs=attrs)
+        corrects = json.loads(corrects)
+
+        self.assertEqual(155, corrects["duration"])
+
+        # 五入
+        mapping_data["STIME"] = "155.5444444444444444"
+        attrs = {
+            "mapping_fields": self.mapping_fields,
+            "mapping_data": mapping_data
+        }
+        (corrects, _, _) = Processor().transform_vindex(
+            attrs=attrs)
+        corrects = json.loads(corrects)
+
+        self.assertEqual(156, corrects["duration"])
 
     def test_transform_vindex_arrs(self):
         mapping_data = json.loads(copy.copy(self.mapping_data.strip()))
@@ -1114,7 +1143,7 @@ class TestUtils(unittest.TestCase):
             "blankinfo": self.blankinfo_fdir,
         }
         sttrs = Utils.extract_stt_from_file(fname, fdirs)
-        self.assertEqual(3, len(sttrs["errors"]))
+        self.assertEqual(3, len(sttrs["sttr_errors"]))
 
     def test_append_suffix_not_exists(self):
         self.assertEqual("/123/", Utils.append_suffix_not_exists("/123", "/"))
@@ -1292,7 +1321,7 @@ class TestIndex(unittest.TestCase):
                 "CALLINFO": null,
                 "STARTTIME": "2018-04-03 07:03:49.0",
                 "ENDTIME": "2018-04-03 07:06:24.0",
-                "STIME": "-",
+                "STIME": "0.0",
                 "STAFF_ID": "-",
                 "AGENT_ID": "-",
                 "STAFFNAME": "-",
@@ -1424,7 +1453,7 @@ class TestIndex(unittest.TestCase):
             self.hd_mappings, mapping_data)._print()
         for (field, value) in _json.items():
             if field not in ["errors"]:
-                self.assertTrue(value in ["", "0", "0.0"])
+                self.assertTrue(value in ["", "0", "0.0", 0])
 
     def test_hd_index_mapping(self):
         mapping_data = json.loads(self.mapping_data.strip())
@@ -1439,7 +1468,8 @@ class TestIndex(unittest.TestCase):
                 value = value.strip()
             if field not in ["policy_objective_guid", "in_date",  # 已删除
                              "starttime", "endtime",  # 转成时间戳
-                             "calltype"]:  # 转中文
+                             "calltype",  # 转中文
+                             "stime"]:  # 转整型
                 self.assertEqual(_json[self.hd_mappings[field]], value)
 
     def test_update_sttr(self):

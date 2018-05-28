@@ -44,6 +44,8 @@ class HDIndex(BaseIndex):
         if self._isset("policy_objective_guid"):
             self._unset("policy_objective_guid")
 
+        self._set("duration", int(round(float(self._get("duration")))))
+
         self._unset("emotionvaluea")
         self._unset("emotionvalueb")
 
