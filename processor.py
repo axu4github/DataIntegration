@@ -335,7 +335,7 @@ class Processor(LoggableMixin):
                     fname = os.path.basename(_file["download_path"])
                     png_path = os.path.join(
                         _output_dir, "{0}.png".format(fname))
-                    self.logger.debug("PNG Result Path: {0}".format(png_path))
+                    self.logger.info("Get PNG Result [{0}]".format(png_path))
                     if not self.is_test_mode:
                         try:
                             _content = Utils.get_file_strcontents(png_path)
