@@ -303,6 +303,9 @@ class Processor(LoggableMixin):
                                  attributes=attrs)._print()
 
     def wav2png(self, content, _attrs=None):
+        """
+        语音文件生成波形图
+        """
         cmd = None
         if content is not None:
             content = json.loads(content)
@@ -314,10 +317,10 @@ class Processor(LoggableMixin):
                not Utils.isempty(_attrs["dest_dir"]):
                 raise ArgumentsError("dest_dir Is Not Set In Attributes.")
 
-            if "ftp_download_root_dir" not in _attrs:
-                ftp_dw_root = Config.FTP_DOWNLOAD_ROOT_DIR
-            else:
+            if "ftp_download_root_dir" in _attrs:
                 ftp_dw_root = _attrs["ftp_download_root_dir"]
+            else:
+                ftp_dw_root = Config.FTP_DOWNLOAD_ROOT_DIR
 
             input_dir = _attrs["dest_dir"]
             output_dir = os.path.join(
@@ -334,9 +337,13 @@ class Processor(LoggableMixin):
                         _output_dir, "{0}.png".format(fname))
                     self.logger.debug("PNG Result Path: {0}".format(png_path))
                     if not self.is_test_mode:
-                        _content = Utils.get_file_strcontents(png_path)
-                        _file["waveform"] = "data:image/png;base64,{0}".format(
-                            base64.b64encode(_content))
+                        try:
+                            _content = Utils.get_file_strcontents(png_path)
+                            _file["waveform"] = "data:image/png;base64,{0}".format(
+                                base64.b64encode(_content))
+                        except Exception as e:
+                            _file["wav2png_errors"] = str(e)
+
                     _file["id"] = fname
 
         return ProcessorResponse(

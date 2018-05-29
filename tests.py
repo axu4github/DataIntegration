@@ -774,7 +774,7 @@ class TestProcessor(unittest.TestCase):
             "dest_dir": os.path.join(Config.BASE_DIR, "tests", "resources")
         }
         content = [
-            {"download_path": "/mnt/20180403090753100035900740.wav"}]
+            {"download_path": "/mnasdasdt/20180403090753100035900740.wav"}]
         content = json.dumps(content)
         (corrects, _, attributes) = Processor(
             is_test_mode=True).wav2png(content, _attrs)
