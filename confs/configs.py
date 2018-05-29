@@ -8,6 +8,10 @@ class Config(object):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     THIRD_PARTY_DIR = os.path.join(BASE_DIR, "thrid_party")
     TESTS_DIR = os.path.join(BASE_DIR, "tests")
+    LOGS_DIR = os.path.join(BASE_DIR, "logs")
+
+    if not os.path.exists(LOGS_DIR) or not os.path.isdir(LOGS_DIR):
+        os.makedirs(LOGS_DIR)  # 创建日志目录
 
     ERROR_SEPARATOR = " && "
     ERROR_MESSAGE_SEPARATOR = " & "
@@ -58,7 +62,8 @@ class Config(object):
     BACKUP_DIR_DATE_FORMAT = "%Y%m%d_%H%M%S"
 
     WAV_TO_PNG_PATH = os.path.join(THIRD_PARTY_DIR, "wav2png", "wav2png")
-    WAV_TO_PNG_COMMAND = "%s {input_dir} {output_dir}" % WAV_TO_PNG_PATH
+    WAV_TO_PNG_COMMAND = "%s {input_dir} {output_dir} %s" % (
+        WAV_TO_PNG_PATH, LOGS_DIR)
 
     # FTP 配置
     FTP_HOST = "10.163.91.122"
@@ -160,4 +165,4 @@ class Config(object):
 
 
 if __name__ == "__main__":
-    print(Config.SPEECH_RECOGNITION_CMD)
+    print(Config.WAV_TO_PNG_COMMAND)

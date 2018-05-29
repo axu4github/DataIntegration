@@ -2,8 +2,17 @@
 
 INPUT=$1
 OUTPUT=$2
+LOG_FILEDIR=$3
+LOG_FILENAME="wav2png.log"
 CURRENT_DIR=`dirname $0`
 RUNNER=`which java`
+
+if [ "" = "${LOG_FILEDIR}" ]; then
+    LOG_FILEDIR="${CURRENT_DIR}/../../logs"
+fi
+
+mkdir -p ${LOG_FILEDIR}
+log_filepath="${LOG_FILEDIR}/${LOG_FILENAME}"
 
 if [ -d ${INPUT} ]; then
 	mkdir -p ${OUTPUT}
@@ -12,7 +21,7 @@ if [ -d ${INPUT} ]; then
 		filename=`basename ${input_filepath}`
 		output_filepath=${OUTPUT}/${filename}".png"
 		command="${RUNNER} -jar ${CURRENT_DIR}/CreateWaveform.jar ${input_filepath} ${output_filepath}"
-		echo ${command}
+		echo ${command} >> ${log_filepath}
 		${command}
 	done
 fi
