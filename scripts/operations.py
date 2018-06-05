@@ -3,6 +3,7 @@
 import click
 import MySQLdb
 from prettytable import PrettyTable
+from solrcloudpy.connection import SolrConnection
 import time
 import os
 import sys
@@ -28,7 +29,7 @@ STEP_CODE_TO_NAME = {
     "voice_solr": "索引存储到Solr",
     "voice_hive": "索引存储到Hive",
     "voicefile_validate": "语音校验",
-    "voicefile_ftp": "语音下载（FTP）",
+    "voicefile_ftp": "语音下载",
     "voicefile_waveform": "语音转波形图",
     "voicefile_stt": "语音识别",
 }
@@ -54,6 +55,13 @@ SQL = """
         s.date = "{date}";
 """
 
+SOLR_NODES = ["10.0.3.48:8983", "10.0.3.50:8983"]
+SOLR_VERSION = "5.5.1"
+SOLR_COLLECTIONS = ["hengda_project"]
+
+coll = SolrConnection(
+    SOLR_NODES, version=SOLR_VERSION)[SOLR_COLLECTIONS[0]]
+
 conn = MySQLdb.connect(host=MYSQL_HOST, user=MYSQL_USER,
                        passwd=MYSQL_PASSWD, db=MYSQL_DB,
                        connect_timeout=5)  # 超时（单位：秒）
@@ -61,8 +69,14 @@ cur = conn.cursor()
 
 
 def sqlquery(sql, cur=None):
+    """ MYSQL 查询 """
     cur.execute(sql)
     return [row for row in cur]
+
+
+def solrquery(query, coll=None):
+    """ Solr 查询 """
+    return coll.search(query).result['response']
 
 
 def groupby_row(rows):
@@ -75,6 +89,14 @@ def groupby_row(rows):
         else:
             r[_id].append(row)
     return r
+
+
+def generate_solrquery_by_date(date):
+    return {
+        "years": date[:4],
+        "months": date[4:6],
+        "days": date[6:8]
+    }
 
 
 def transform_step(code):
@@ -100,8 +122,10 @@ def cli():
               default=time.strftime("%Y%m%d", time.localtime()),
               help="归集日期")
 def task(date):
+    query = generate_solrquery_by_date(date)
+    print(solrquery(query, coll))
+
     execute_sql = SQL.format(date=date).strip()
-    # click.echo(execute_sql)
     tasks = groupby_row(sqlquery(execute_sql, cur))
     if len(tasks) > 0:
         table = PrettyTable()
