@@ -13,13 +13,17 @@ sys.setdefaultencoding("utf-8")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-TASK_DETAIL_HEADERS = ["任务编号", "步骤", "步骤索引",
-                       "查询日期", "查询开始时间", "查询结束时间",
+TASK_DETAIL_HEADERS = ["任务编号",
+                       "步骤",
+                       # "步骤索引",
+                       # "查询日期",
+                       "查询开始时间",
+                       "查询结束时间",
                        "步骤执行结束时间"]
 
 STEP_CODE_TO_NAME = {
     "voice_validate": "索引校验",
-    "voice_transform": "索引转换和扩展（转换字段名、扩展语音识别内容）",
+    "voice_transform": "索引转换和扩展",
     "voice_hbase": "索引存储到HBase",
     "voice_solr": "索引存储到Solr",
     "voice_hive": "索引存储到Hive",
@@ -105,9 +109,9 @@ def task(date):
         for (_id, steps) in tasks.items():
             for step in steps:
                 step = list(step)
-                print(step[2])
+                del step[3]  # 删除 步骤索引 列
+                del step[3]  # 删除 查询日期 列
                 step[2] = transform_step(step[2])
-                print(step)
                 table.add_row(step[1:])
 
         click.echo(table)
