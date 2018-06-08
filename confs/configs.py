@@ -73,6 +73,8 @@ class Config(object):
 
     # 语音文件转波形图，图片存储跟目录
     WAVFORM_ROOT_DIR = "/mnt/mfs/wavforms"
+    # 波形图前缀
+    WAVFORM_PREFIX = "data:image/png;base64,"
 
     # 恒大配置文件
     HD_MAPPING_FEILDS = {

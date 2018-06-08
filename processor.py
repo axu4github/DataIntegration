@@ -341,7 +341,8 @@ class Processor(LoggableMixin):
                     if not self.is_test_mode:
                         try:
                             _content = Utils.get_file_strcontents(png_path)
-                            _file["waveform"] = "data:image/png;base64,{0}".format(
+                            _file["waveform"] = "{0}{1}".format(
+                                Config.WAVFORM_PREFIX,
                                 base64.b64encode(_content))
                         except Exception as e:
                             _file["wav2png_errors"] = str(e)
