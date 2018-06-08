@@ -183,12 +183,12 @@ class Utils(object):
         return (cmd, input_dir, output_dir)
 
     @staticmethod
-    def backup_if_exists(_dir):
+    def backup_if_exists(_dir, now=datetime.now()):
         backup_dir = None
         if os.path.exists(_dir) and os.path.isdir(_dir):
             backup_dir = "{0}_{1}".format(
                 Utils.append_suffix_not_exists(_dir, "/")[:-1],
-                datetime.now().strftime(Config.BACKUP_DIR_DATE_FORMAT))
+                now.strftime(Config.BACKUP_DIR_DATE_FORMAT))
             os.rename(_dir, backup_dir)
 
         return (_dir, backup_dir)

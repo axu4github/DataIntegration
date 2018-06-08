@@ -20,6 +20,7 @@ import os
 import time
 import base64
 import json
+from datetime import datetime
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -265,7 +266,8 @@ class Processor(LoggableMixin):
             if not self.is_test_mode:
                 _ftp = Utils.set_ftp_handle()
 
-            dest_dir = Utils.get_dest_dir(auto_create=self.auto_create)
+            dest_dir = Utils.get_dest_dir(
+                now=time.time(), auto_create=self.auto_create)
             attrs = {
                 "ftp_download_root_dir": Config.FTP_DOWNLOAD_ROOT_DIR,
                 "dest_dir": dest_dir
@@ -361,7 +363,8 @@ class Processor(LoggableMixin):
         cmd = Config.SPEECH_RECOGNITION_CMD.format(_attrs["dest_dir"])
         if not self.is_test_mode:
             (_dir, backup_dir) = Utils.backup_if_exists(
-                Config.SPEECH_RECOGNITION_RESULT_DIR)
+                Config.SPEECH_RECOGNITION_RESULT_DIR,
+                now=datetime.now())
             self.logger.debug(
                 "Backup SPEECH_RECOGNITION_RESULT_DIR To {0}".format(
                     backup_dir))
