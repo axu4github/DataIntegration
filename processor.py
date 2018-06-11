@@ -268,6 +268,8 @@ class Processor(LoggableMixin):
 
             dest_dir = Utils.get_dest_dir(
                 now=time.time(), auto_create=self.auto_create)
+            self.logger.debug("FTP DOWNLOAD DIR: [{0}]".format(dest_dir))
+
             attrs = {
                 "ftp_download_root_dir": Config.FTP_DOWNLOAD_ROOT_DIR,
                 "dest_dir": dest_dir
