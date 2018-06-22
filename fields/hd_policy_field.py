@@ -114,6 +114,11 @@ class HDPolicyField(BaseField):
         "hf_eh_result",
         "newpaymode",
         "sms_flag",
+        "tel_m",
+        "birthday_mm",
+        "area",
+        "town",
+        "cardid_m",
     ]
 
     integer_feilds = []

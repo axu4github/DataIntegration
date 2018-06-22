@@ -705,7 +705,12 @@ class TestProcessor(unittest.TestCase):
             "HF_FLAG": "0",
             "HF_EH_RESULT": null,
             "NEWPAYMODE": "-",
-            "SMS_FLAG": "1"
+            "SMS_FLAG": "1",
+            "TEL_M": null,
+            "BIRTHDAY_MM": null,
+            "AREA": null,
+            "TOWN": null,
+            "CARDID_M": null
         }
         """
         data = str_data.strip()
