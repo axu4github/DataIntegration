@@ -85,8 +85,7 @@ class Processor(LoggableMixin):
                 dest = os.path.join(dest_dir, filename)
                 self.logger.debug(
                     "Move Src:[{0}] To Dest:[{1}]".format(src, dest))
-                # 比os.move的好处是当dest已经存在的时候shutil.move会用src覆盖dest
-                shutil.move(src, dest)
+                shutil.copyfile(src, dest)
 
         return ProcessorResponse(corrects=content)._print()
 

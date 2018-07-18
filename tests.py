@@ -262,7 +262,8 @@ class TestProcessor(unittest.TestCase):
         """
 
     def test_move_file_to_ftp(self):
-        data_soruce_base_dir = os.path.join(Config.TESTS_DIR, "resources", "src")
+        data_soruce_base_dir = os.path.join(
+            Config.TESTS_DIR, "resources", "src")
         ftp_base_dir = os.path.join(Config.TESTS_DIR, "resources", "dest")
         content = [{
             "STARTTIME": "2018-03-06 00:29:42.0",
@@ -272,7 +273,7 @@ class TestProcessor(unittest.TestCase):
             "DOCUMENTPATH": "ftp://-/2018_03_06/20180306110212100003900806.wav"
         }, {
             "STARTTIME": "2018-03-06 11:02:12.0",
-            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306110212100003912312300806.wav"
+            "DOCUMENTPATH": "ftp://-/2018_03_06/201800003912312300806.wav"
         }]
 
         attrs = {
@@ -281,26 +282,32 @@ class TestProcessor(unittest.TestCase):
         }
 
         content = json.dumps(content)
-        (corrects, _, _) = Processor().move_file_to_ftp(content=content, attrs=attrs)
+        (corrects, _, _) = Processor().move_file_to_ftp(
+            content=content, attrs=attrs)
 
         self.assertEqual(corrects, content)
-        self.assertTrue(not os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
-        self.assertTrue(not os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
-        self.assertTrue(os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
-        self.assertTrue(os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(
+            data_soruce_base_dir,
+            "2018_03_06",
+            "20180306002941100086900007.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(
+            data_soruce_base_dir,
+            "2018_03_06",
+            "20180306110212100003900806.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
 
-        attrs = {
-            "data_soruce_base_dir": ftp_base_dir,
-            "ftp_base_dir": data_soruce_base_dir,
-        }
+        os.remove(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav"))
+        os.remove(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav"))
 
-        (corrects, _, _) = Processor().move_file_to_ftp(content=content, attrs=attrs)
-
-        self.assertEqual(corrects, content)
-        self.assertTrue(not os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
-        self.assertTrue(not os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
-        self.assertTrue(os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
-        self.assertTrue(os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+        self.assertTrue(not os.path.isfile(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(not os.path.isfile(os.path.join(
+            ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
 
     def test_hd_add_new_field_MPOLICY(self):
         full_data = json.loads(copy.copy(self.full_data.strip()))
