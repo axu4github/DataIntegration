@@ -71,6 +71,11 @@ class Config(object):
     FTP_PASS = "letmein"
     FTP_DOWNLOAD_ROOT_DIR = "/mnt/mfs/ftp_downloads"
 
+    # 中转服务器挂载目录
+    DATA_SOURCE_DIR = ""
+    # 中转服务器FTP目录
+    FTP_DIR = ""
+
     # 语音文件转波形图，图片存储跟目录
     WAVFORM_ROOT_DIR = "/mnt/mfs/wavforms"
     # 波形图前缀
@@ -144,7 +149,8 @@ class Config(object):
         "createddate": "createddate",
         "modifieddate": "modifieddate",
         "workinfo": "workinfo",
-        "callinfo": "callinfo"
+        "callinfo": "callinfo",
+        "mpolicy": "mapfilepath"
     }
 
     # 存储文件名字段

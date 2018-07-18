@@ -26,6 +26,9 @@ class HDIndex(BaseIndex):
            self._isset_and_notdefault("documentpath"):
             self._set("filename", os.path.basename(self._get("documentpath")))
 
+        if self._isset_and_isdefault("mpolicy"):
+            self._set("mpolicy", "0")
+
         super(HDIndex, self)._transfer()
         if self._isset_and_notdefault("calltype"):
             int_calltype = int(self._get("calltype"))

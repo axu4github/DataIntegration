@@ -17,6 +17,7 @@ from errors import (
 )
 from confs.configs import Config
 import os
+import shutil
 import time
 import base64
 import json
@@ -46,6 +47,48 @@ class Processor(LoggableMixin):
         self.auto_create = True
         if self.is_test_mode:
             self.auto_create = False
+
+    def move_file_to_ftp(self, content=None, attrs=None):
+        """
+        恒大生产环境要求：需要将挂载到中转服务器的数据目录中数据移动到FTP目录中，
+                       不能直接从挂载目录中传输数据。
+        """
+        data_soruce_base_dir = Config.DATA_SOURCE_DIR
+        ftp_base_dir = Config.FTP_DIR
+        if content is not None:
+            content = json.loads(content.strip())
+            if not isinstance(content, list):
+                content = [content]
+
+            for _file in content:
+                date_dir, filename = Utils.get_ftppath_dir_and_filename(
+                    _file["DOCUMENTPATH"])
+
+                if Utils.isset_and_notnone("data_soruce_base_dir", attrs):
+                    data_soruce_base_dir = attrs["data_soruce_base_dir"]
+
+                if Utils.isset_and_notnone("ftp_base_dir", attrs):
+                    ftp_base_dir = attrs["ftp_base_dir"]
+
+                src = os.path.join(
+                    data_soruce_base_dir, date_dir, filename)
+                if not os.path.isfile(src):
+                    self.logger.warn("""
+                        Data Source Path File: [{0}] Not Exists.
+                    """.format(src).strip())
+                    continue
+
+                dest_dir = os.path.join(ftp_base_dir, date_dir)
+                if not os.path.isdir(dest_dir):
+                    os.makedirs(dest_dir)
+
+                dest = os.path.join(dest_dir, filename)
+                self.logger.debug(
+                    "Move Src:[{0}] To Dest:[{1}]".format(src, dest))
+                # 比os.move的好处是当dest已经存在的时候shutil.move会用src覆盖dest
+                shutil.move(src, dest)
+
+        return ProcessorResponse(corrects=content)._print()
 
     def validate_vindex(self, content=None, attrs=None):
         corrects, incorrects = None, None

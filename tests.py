@@ -107,7 +107,8 @@ class TestProcessor(unittest.TestCase):
             "createddate": "createddate",
             "modifieddate": "modifieddate",
             "workinfo": "workinfo",
-            "callinfo": "callinfo"
+            "callinfo": "callinfo",
+            "mpolicy": "mapfilepath"
         }
 
         self.mapping_data = """
@@ -180,7 +181,8 @@ class TestProcessor(unittest.TestCase):
                 "TOTAL_PREM": null,
                 "CHARGE_YEAR": null,
                 "AGENT_NAME": null,
-                "PH_MOBILE": null
+                "PH_MOBILE": null,
+                "MPOLICY": "1"
             }
         """
 
@@ -254,9 +256,63 @@ class TestProcessor(unittest.TestCase):
             "TOTAL_PREM": "- && -",
             "CHARGE_YEAR": "10 && 10",
             "AGENT_NAME": "- && -",
-            "PH_MOBILE": "=-= && =-="
+            "PH_MOBILE": "=-= && =-=",
+            "MPOLICY": "1"
         }
         """
+
+    def test_move_file_to_ftp(self):
+        data_soruce_base_dir = os.path.join(Config.TESTS_DIR, "resources", "src")
+        ftp_base_dir = os.path.join(Config.TESTS_DIR, "resources", "dest")
+        content = [{
+            "STARTTIME": "2018-03-06 00:29:42.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306002941100086900007.wav"
+        }, {
+            "STARTTIME": "2018-03-06 11:02:12.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306110212100003900806.wav"
+        }, {
+            "STARTTIME": "2018-03-06 11:02:12.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306110212100003912312300806.wav"
+        }]
+
+        attrs = {
+            "data_soruce_base_dir": data_soruce_base_dir,
+            "ftp_base_dir": ftp_base_dir,
+        }
+
+        content = json.dumps(content)
+        (corrects, _, _) = Processor().move_file_to_ftp(content=content, attrs=attrs)
+
+        self.assertEqual(corrects, content)
+        self.assertTrue(not os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(not os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+
+        attrs = {
+            "data_soruce_base_dir": ftp_base_dir,
+            "ftp_base_dir": data_soruce_base_dir,
+        }
+
+        (corrects, _, _) = Processor().move_file_to_ftp(content=content, attrs=attrs)
+
+        self.assertEqual(corrects, content)
+        self.assertTrue(not os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(not os.path.isfile(os.path.join(ftp_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306002941100086900007.wav")))
+        self.assertTrue(os.path.isfile(os.path.join(data_soruce_base_dir, "2018_03_06", "20180306110212100003900806.wav")))
+
+    def test_hd_add_new_field_MPOLICY(self):
+        full_data = json.loads(copy.copy(self.full_data.strip()))
+        attrs = {
+            "mapping_fields": Config.HD_MAPPING_FEILDS,
+            "mapping_data": full_data
+        }
+        (corrects, _, _) = Processor().transform_vindex(
+            attrs=attrs)
+        corrects = json.loads(corrects)
+
+        self.assertEqual("1", corrects["mapfilepath"])
 
     def test_validate_vindex(self):
         content = "{}"
@@ -409,10 +465,12 @@ class TestProcessor(unittest.TestCase):
         incorrects = json.loads(incorrects)
 
         errors = incorrects["errors"].split(Config.ERROR_SEPARATOR)
-        error_message = errors[0].split(Config.ERROR_MESSAGE_SEPARATOR)
+        errors_code = [int(error_message.split(
+            Config.ERROR_MESSAGE_SEPARATOR)[-1]) for error_message in errors]
 
         self.assertTrue(corrects is None)
-        self.assertEqual(-12, int(error_message[-1]))
+        self.assertTrue(-12 in errors_code)
+        self.assertTrue(-3 in errors_code)
 
     def test_transform_vindex_incorrect(self):
         mapping_data = json.loads(copy.copy(self.mapping_data.strip()))

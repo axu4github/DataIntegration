@@ -219,6 +219,10 @@ class Utils(object):
         return "/".join(ftp_path.split("/")[3:-1])
 
     @staticmethod
+    def get_ftppath_dir_and_filename(ftppath):
+        return (Utils.get_ftppath_dir(ftppath), os.path.basename(ftppath))
+
+    @staticmethod
     def get_download_fpath(fpath, ftppath=None, dest_dir=None):
         fname = os.path.basename(fpath)
         if ftppath is None:
