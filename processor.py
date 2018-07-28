@@ -48,9 +48,49 @@ class Processor(LoggableMixin):
         if self.is_test_mode:
             self.auto_create = False
 
+    def split_flowfiles_for_stt(self, content=None, _attrs=None):
+        """
+        由于语音识别模块是集群，所以再进行语音识别模块前需要将数据预先分开，
+        同时由于执行识别是以目录为入口，所以需要将分离的语音文件移动到不同的目录中。
+        """
+        if "dest_dir" not in _attrs and not Utils.isempty(_attrs["dest_dir"]):
+            raise ArgumentsError("dest_dir Is Not Set In Attributes.")
+
+        result = []
+        if content is not None:
+            content = json.loads(content.strip())
+            if not isinstance(content, list):
+                content = [content]
+
+            split_number = Config.DEFAULT_SPLIT_NUMBER
+            if "split_number" in _attrs:
+                split_number = _attrs["split_number"]
+
+            dest_dir = _attrs["dest_dir"]
+            content_chunks = Utils.groups(content, split_number)
+            for i, content_chunk in enumerate(content_chunks):
+                _dest_dir = os.path.join(dest_dir, "CHUNK-{0}".format(i + 1))
+                if not os.path.isdir(_dest_dir):
+                    os.makedirs(_dest_dir)
+
+                _attrs["dest_dir"] = _dest_dir
+                for _file in content_chunk:
+                    filename = os.path.basename(_file)
+                    _src = os.path.join(dest_dir, filename)
+                    _dest = os.path.join(_dest_dir, filename)
+                    self.logger.debug(
+                        "Copy Src:[{0}] To Dest:[{1}]".format(_src, _dest))
+                    shutil.copyfile(_src, _dest)
+
+                result.append(
+                    ProcessorResponse(
+                        corrects=content_chunk, attributes=_attrs)._print())
+
+        return result
+
     def move_file_to_ftp(self, content=None, attrs=None):
         """
-        恒大生产环境要求：需要将挂载到中转服务器的数据目录中数据移动到FTP目录中，
+        恒大生产环境要求：需要将挂载到中转服务器的数据目录中数据拷贝到FTP目录中，
                        不能直接从挂载目录中传输数据。
         """
         data_soruce_base_dir = Config.DATA_SOURCE_DIR
@@ -84,7 +124,7 @@ class Processor(LoggableMixin):
 
                 dest = os.path.join(dest_dir, filename)
                 self.logger.debug(
-                    "Move Src:[{0}] To Dest:[{1}]".format(src, dest))
+                    "Copy Src:[{0}] To Dest:[{1}]".format(src, dest))
                 shutil.copyfile(src, dest)
 
         return ProcessorResponse(corrects=content)._print()

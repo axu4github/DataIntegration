@@ -1091,6 +1091,19 @@ class TestUtils(unittest.TestCase):
         self.incorrect_fpath = os.path.join(self.base_dir,
                                             "filesize_error.file")
 
+    def test_groups(self):
+        _list = range(10, 75)
+        self.assertEqual(len(Utils.groups(_list, 10)), 10)
+        self.assertEqual(len(Utils.groups(_list, 1)), 1)
+
+        _list = range(0, 4)
+        self.assertEqual(len(Utils.groups(_list, 3)), 3)
+
+    def test_chunks(self):
+        _list = range(10, 75)
+        self.assertEqual(len(list(Utils.chunks(_list, 10))), 7)
+        self.assertEqual(len(list(Utils.chunks(_list, 1))), len(_list) / 1)
+
     def test_jsonobj_isempty(self):
         """ 测试工具类的jsonobj_isempty方法 """
         self.assertTrue(Utils.jsonobj_isempty(json.loads("{}")))
@@ -1276,6 +1289,7 @@ class TestUtils(unittest.TestCase):
         self.assertTrue(Utils.isset_and_notnone("foo", _dict))
         self.assertTrue(not Utils.isset_and_notnone("foo1", _dict))
         self.assertTrue(not Utils.isset_and_notnone("bar", _dict))
+        self.assertTrue(not Utils.isset_and_notnone("other", _dict))
 
 
 class TestField(unittest.TestCase):

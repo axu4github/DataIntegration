@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import json
 import os
 import time
@@ -10,6 +12,9 @@ from errors import (
 )
 from confs.configs import Config
 from ftplib import FTP
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 class Utils(object):
@@ -267,3 +272,21 @@ class Utils(object):
                 os.remove(_dest)
 
         return (_is_succ, message)
+
+    @staticmethod
+    def groups(l, n):
+        """ 共分多少组 """
+        gn = len(l) / n
+        _list = list(Utils.chunks(l, gn))
+        _len = len(_list)
+        if _len != n:
+            _list[_len - 2] = _list[_len - 2] + _list[_len - 1]
+            del(_list[_len - 1])
+
+        return _list
+
+    @staticmethod
+    def chunks(l, n):
+        """ 多少元素分一组 """
+        for i in xrange(0, len(l), n):
+            yield l[i:i + n]
