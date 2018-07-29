@@ -21,6 +21,7 @@ import shutil
 import time
 import base64
 import json
+import copy
 from datetime import datetime
 import sys
 reload(sys)
@@ -62,29 +63,29 @@ class Processor(LoggableMixin):
             if not isinstance(content, list):
                 content = [content]
 
-            split_number = Config.DEFAULT_SPLIT_NUMBER
-            if "split_number" in _attrs:
-                split_number = _attrs["split_number"]
+            split_group_number = Utils.use_if_set_else_default(
+                "split_group_number", _attrs, Config.DEFAULT_SPLIT_NUMBER)
 
             dest_dir = _attrs["dest_dir"]
-            content_chunks = Utils.groups(content, split_number)
+            content_chunks = Utils.groups(content, split_group_number)
             for i, content_chunk in enumerate(content_chunks):
+                _attrs = copy.copy(_attrs)
                 _dest_dir = os.path.join(dest_dir, "CHUNK-{0}".format(i + 1))
                 if not os.path.isdir(_dest_dir):
                     os.makedirs(_dest_dir)
 
                 _attrs["dest_dir"] = _dest_dir
                 for _file in content_chunk:
-                    filename = os.path.basename(_file)
+                    filename = os.path.basename(_file["DOCUMENTPATH"])
                     _src = os.path.join(dest_dir, filename)
                     _dest = os.path.join(_dest_dir, filename)
                     self.logger.debug(
                         "Copy Src:[{0}] To Dest:[{1}]".format(_src, _dest))
-                    shutil.copyfile(_src, _dest)
+                    if not self.is_test_mode:
+                        shutil.copyfile(_src, _dest)
 
-                result.append(
-                    ProcessorResponse(
-                        corrects=content_chunk, attributes=_attrs)._print())
+                result.append(ProcessorResponse(
+                    corrects=content_chunk, attributes=_attrs)._print())
 
         return result
 

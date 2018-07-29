@@ -171,6 +171,9 @@ class Config(object):
     SPEECH_RECOGNITION_CMD = "cd %s; %s/voice_rec %s/voice_recognize.ini {0}" % tuple(
         [SPEECH_RECOGNITION_DIR] * 3)
 
+    # 语音识别集群处理时，默认分组（应等于语音识别集群服务器数量）
+    DEFAULT_SPLIT_NUMBER = 1
+
 
 if __name__ == "__main__":
     print(Config.WAV_TO_PNG_COMMAND)

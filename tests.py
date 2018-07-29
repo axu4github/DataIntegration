@@ -262,6 +262,34 @@ class TestProcessor(unittest.TestCase):
         }
         """
 
+    def test_split_flowfiles_for_stt(self):
+        content = [{
+            "STARTTIME": "2018-03-06 00:29:42.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306002941100086900007.wav"
+        }, {
+            "STARTTIME": "2018-03-06 11:02:12.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/20180306110212100003900806.wav"
+        }, {
+            "STARTTIME": "2018-03-06 11:02:12.0",
+            "DOCUMENTPATH": "ftp://-/2018_03_06/201800003912312300806.wav"
+        }]
+
+        attrs = {
+            "dest_dir": self.base_dir,
+            "split_group_number": 3,
+        }
+
+        content = json.dumps(content)
+        result = Processor(is_test_mode=True).split_flowfiles_for_stt(
+            content=content, _attrs=attrs)
+
+        self.assertEqual(attrs["split_group_number"], len(result))
+        for i, r in enumerate(result):
+            dest_dir = result[i][2]["dest_dir"]
+            self.assertTrue(os.path.isdir(dest_dir))
+            self.assertEqual(
+                "CHUNK-{0}".format(i + 1), os.path.basename(dest_dir))
+
     def test_move_file_to_ftp(self):
         data_soruce_base_dir = os.path.join(
             Config.TESTS_DIR, "resources", "src")
@@ -1108,6 +1136,10 @@ class TestUtils(unittest.TestCase):
 
         _list = range(0, 4)
         self.assertEqual(len(Utils.groups(_list, 3)), 3)
+
+        _list = range(0, 3)
+        self.assertEqual(3, len(_list))
+        self.assertEqual(len(Utils.groups(_list, 1)), 1)
 
     def test_chunks(self):
         _list = range(10, 75)
