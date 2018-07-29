@@ -403,15 +403,14 @@ class Processor(LoggableMixin):
                not Utils.isempty(_attrs["dest_dir"]):
                 raise ArgumentsError("dest_dir Is Not Set In Attributes.")
 
-            if "ftp_download_root_dir" in _attrs:
-                ftp_dw_root = _attrs["ftp_download_root_dir"]
-            else:
-                ftp_dw_root = Config.FTP_DOWNLOAD_ROOT_DIR
+            ftp_dw_root = Utils.use_if_set_else_default(
+                "ftp_download_root_dir", _attrs, Config.FTP_DOWNLOAD_ROOT_DIR)
+            wavform_root = Utils.use_if_set_else_default(
+                "wavform_root", _attrs, Config.WAVFORM_ROOT_DIR)
 
             input_dir = _attrs["dest_dir"]
             output_dir = os.path.join(
-                Config.WAVFORM_ROOT_DIR,
-                *input_dir.split(ftp_dw_root)[-1].split("/"))
+                wavform_root, *input_dir.split(ftp_dw_root)[-1].split("/"))
 
             (cmd, _, _output_dir) = Utils.wav2png(
                 input_dir, output_dir, self.is_test_mode)

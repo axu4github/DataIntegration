@@ -40,6 +40,7 @@ class TestProcessor(unittest.TestCase):
     """ 测试处理类 """
 
     def setUp(self):
+        self.base_dir = "./tests/resources"
         self.mapping_fields = {
             "area_of_job": "area_of_job",
             "objectivetype": "type_of_service",
@@ -841,7 +842,9 @@ class TestProcessor(unittest.TestCase):
 
     def test_wav2png(self):
         _attrs = {
-            "dest_dir": os.path.join(Config.BASE_DIR, "tests", "resources")
+            "dest_dir": os.path.join(Config.BASE_DIR, "tests", "resources"),
+            "ftp_download_root_dir": self.base_dir,
+            "wavform_root": self.base_dir,
         }
         content = [
             {"download_path": "/mnasdasdt/20180403090753100035900740.wav"}]
@@ -1091,6 +1094,13 @@ class TestUtils(unittest.TestCase):
         self.incorrect_fpath = os.path.join(self.base_dir,
                                             "filesize_error.file")
 
+    def test_use_if_set_else_default(self):
+        _dict, default = {"foo": "bar"}, "BABABA"
+        self.assertEqual(
+            "bar", Utils.use_if_set_else_default("foo", _dict, default))
+        self.assertEqual(
+            default, Utils.use_if_set_else_default("foo1", _dict, default))
+
     def test_groups(self):
         _list = range(10, 75)
         self.assertEqual(len(Utils.groups(_list, 10)), 10)
@@ -1249,8 +1259,8 @@ class TestUtils(unittest.TestCase):
 
     def test_get_dest_dir(self):
         self.assertEqual(
-            Config.FTP_DOWNLOAD_ROOT_DIR + "/20180427/154758",
-            Utils.get_dest_dir(now="1524815278"))
+            os.path.join(self.base_dir, "20180427", "154758"),
+            Utils.get_dest_dir(now="1524815278", ftp_dw_root=self.base_dir))
 
     def test_get_ftppath_dir(self):
         fpath = "ftp://10.0.3.24/1234/123123/123123/232/23/1524815278.wav"
@@ -1262,7 +1272,7 @@ class TestUtils(unittest.TestCase):
 
     def test_get_download_fpath(self):
         fpath = "ftp://10.0.3.24/1234/123/1524815278.wav"
-        (_src, _dest) = Utils.get_download_fpath(fpath)
+        (_src, _dest) = Utils.get_download_fpath(fpath, dest_dir=self.base_dir)
         self.assertEqual(
             "ftp://{0}/1234/123/1524815278.wav".format(Config.FTP_HOST), _src)
         self.assertEqual(os.path.basename(fpath), os.path.basename(_dest))
@@ -1270,7 +1280,8 @@ class TestUtils(unittest.TestCase):
     def test_get_download_fpath_customer_ftppath(self):
         fpath = "ftp://10.0.3.24/1234/123/1524815278.wav"
         ftppath = "customer/ftppath"
-        (_src, _dest) = Utils.get_download_fpath(fpath, ftppath=ftppath)
+        (_src, _dest) = Utils.get_download_fpath(
+            fpath, ftppath=ftppath, dest_dir=self.base_dir)
         self.assertEqual(
             "ftp://{0}/{1}/1524815278.wav".format(
                 Config.FTP_HOST, ftppath),

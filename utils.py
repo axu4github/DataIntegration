@@ -20,6 +20,14 @@ sys.setdefaultencoding('utf8')
 class Utils(object):
 
     @staticmethod
+    def use_if_set_else_default(k, _dict, default=None):
+        res = default
+        if k in _dict:
+            res = _dict[k]
+
+        return res
+
+    @staticmethod
     def isset_and_notnone(k, _dict):
         return k in _dict and _dict[k] is not None
 
