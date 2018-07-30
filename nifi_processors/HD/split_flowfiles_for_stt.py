@@ -45,7 +45,7 @@ class InputStream(InputStreamCallback):
         result = Processor().split_flowfiles_for_stt(
             content, self._attrs)
         for r in result:
-            (corrects, attributes, _succ) = r
+            (corrects, _, attributes) = r
             self._transfer(corrects, attributes, _succ)
 
     def _transfer(self, _content, _attributes, _relationship):

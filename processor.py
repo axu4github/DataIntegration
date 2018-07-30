@@ -63,8 +63,8 @@ class Processor(LoggableMixin):
             if not isinstance(content, list):
                 content = [content]
 
-            split_group_number = Utils.use_if_set_else_default(
-                "split_group_number", _attrs, Config.DEFAULT_SPLIT_NUMBER)
+            split_group_number = int(Utils.use_if_set_else_default(
+                "split_group_number", _attrs, Config.DEFAULT_SPLIT_NUMBER))
 
             dest_dir = _attrs["dest_dir"]
             content_chunks = Utils.groups(content, split_group_number)
@@ -82,7 +82,7 @@ class Processor(LoggableMixin):
                     self.logger.debug(
                         "Copy Src:[{0}] To Dest:[{1}]".format(_src, _dest))
                     if not self.is_test_mode:
-                        shutil.copyfile(_src, _dest)
+                        shutil.move(_src, _dest)
 
                 result.append(ProcessorResponse(
                     corrects=content_chunk, attributes=_attrs)._print())

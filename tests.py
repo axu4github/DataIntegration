@@ -276,14 +276,14 @@ class TestProcessor(unittest.TestCase):
 
         attrs = {
             "dest_dir": self.base_dir,
-            "split_group_number": 3,
+            "split_group_number": "3",
         }
 
         content = json.dumps(content)
         result = Processor(is_test_mode=True).split_flowfiles_for_stt(
             content=content, _attrs=attrs)
 
-        self.assertEqual(attrs["split_group_number"], len(result))
+        self.assertEqual(int(attrs["split_group_number"]), len(result))
         for i, r in enumerate(result):
             dest_dir = result[i][2]["dest_dir"]
             self.assertTrue(os.path.isdir(dest_dir))
