@@ -455,7 +455,8 @@ class Processor(LoggableMixin):
                 os.path.join(_dir, "voicesence")
             ]
             for _d in _dirs:
-                os.makedirs(_d, 0755)
+                if not os.path.is_dir(_d):
+                    os.makedirs(_d, 0755)
 
             self.logger.info("Speech Recognition Command: {0}".format(cmd))
             os.system(cmd)
