@@ -447,13 +447,7 @@ class Processor(LoggableMixin):
 
         cmd = Config.SPEECH_RECOGNITION_CMD.format(_attrs["dest_dir"])
         if not self.is_test_mode:
-            (_dir, backup_dir) = Utils.backup_if_exists(
-                Config.SPEECH_RECOGNITION_RESULT_DIR,
-                now=datetime.now())
-            self.logger.debug(
-                "Backup SPEECH_RECOGNITION_RESULT_DIR To {0}".format(
-                    backup_dir))
-
+            _dir = Config.SPEECH_RECOGNITION_RESULT_DIR
             _dirs = [
                 _dir,
                 os.path.join(_dir, "voiceconflict"),
