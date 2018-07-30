@@ -1133,6 +1133,7 @@ class TestUtils(unittest.TestCase):
         _list = range(10, 75)
         self.assertEqual(len(Utils.groups(_list, 10)), 10)
         self.assertEqual(len(Utils.groups(_list, 1)), 1)
+        self.assertEqual(len(Utils.groups(_list, 2)), 2)
 
         _list = range(0, 4)
         self.assertEqual(len(Utils.groups(_list, 3)), 3)
