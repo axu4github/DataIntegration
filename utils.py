@@ -284,10 +284,14 @@ class Utils(object):
     @staticmethod
     def groups(l, n):
         """ 共分多少组 """
-        gn = len(l) / n
+        l_lens, gn, last_merge_flag = len(l), 1, False
+        if n < l_lens:
+            gn = len(l) / n
+            last_merge_flag = True
+
         _list = list(Utils.chunks(l, gn))
         _len = len(_list)
-        if _len != n:
+        if _len != n and last_merge_flag:
             _list[_len - 2] = _list[_len - 2] + _list[_len - 1]
             del(_list[_len - 1])
 

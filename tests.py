@@ -1142,6 +1142,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(3, len(_list))
         self.assertEqual(len(Utils.groups(_list, 1)), 1)
 
+        _list = range(0, 1)
+        self.assertEqual(len(Utils.groups(_list, 2)), 1)
+
+        _list = range(0, 2)
+        self.assertEqual(len(Utils.groups(_list, 3)), 2)
+
     def test_chunks(self):
         _list = range(10, 75)
         self.assertEqual(len(list(Utils.chunks(_list, 10))), 7)
