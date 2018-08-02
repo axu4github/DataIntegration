@@ -263,21 +263,27 @@ class Utils(object):
         return dest_dir
 
     @staticmethod
-    def download_ftp_file(_src, _dest, ftp_handle=None):
-        _is_succ, message = False, ""
-        try:
-            if ftp_handle is None:
-                ftp_handle = Utils.set_ftp_handle()
+    def download_ftp_file(_src, _dest, ftp_handle=None, retry=1):
+        _is_succ, message, curr_retry = False, "", 0
+        while True:
+            try:
+                if ftp_handle is None:
+                    ftp_handle = Utils.set_ftp_handle()
 
-            ftp_handle.cwd("/{0}".format(Utils.get_ftppath_dir(_src)))
-            ftp_handle.retrbinary("RETR %s" % os.path.basename(_src),
-                                  open(_dest, "wb").write)
-            ftp_handle.cwd("/")
-            _is_succ = True
-        except Exception as e:
-            message = str(e)
-            if os.path.exists(_dest) and os.path.isfile(_dest):
-                os.remove(_dest)
+                ftp_handle.cwd("/{0}".format(Utils.get_ftppath_dir(_src)))
+                ftp_handle.retrbinary("RETR %s" % os.path.basename(_src),
+                                      open(_dest, "wb").write)
+                _is_succ = True
+            except Exception as e:
+                curr_retry += 1
+                message = str(e)
+                if os.path.exists(_dest) and os.path.isfile(_dest):
+                    os.remove(_dest)
+            finally:
+                ftp_handle.cwd("/")
+
+            if _is_succ or curr_retry > retry:
+                break
 
         return (_is_succ, message)
 

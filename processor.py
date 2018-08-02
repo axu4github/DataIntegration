@@ -363,11 +363,12 @@ class Processor(LoggableMixin):
                         _file["DOCUMENTPATH"], dest_dir=dest_dir)
                     self.logger.info("Download File: {0} => {1}.".format(
                         _src, _dest))
-                    if self.is_test_mode:
-                        _is_succ, message = False, str(IsTestModeError())
-                    else:
+
+                    _is_succ, message = False, str(IsTestModeError())
+                    if not self.is_test_mode:
                         (_is_succ, message) = Utils.download_ftp_file(
-                            _src, _dest, ftp_handle=_ftp)
+                            _src, _dest, ftp_handle=_ftp,
+                            retry=Config.DEFAULT_RETRY_NUMBER)
 
                     if _is_succ:
                         _file["download_path"] = _dest
@@ -378,8 +379,7 @@ class Processor(LoggableMixin):
                     _file[stt_error_field].append(
                         str(ArgumentsNotFoundError()))
 
-                if stt_error_field in _file and \
-                   len(_file[stt_error_field]) > 0:
+                if len(_file[stt_error_field]) > 0:
                     incorrects.append(_file)
                 else:
                     corrects.append(_file)

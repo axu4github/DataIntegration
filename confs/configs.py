@@ -71,6 +71,9 @@ class Config(object):
     FTP_PASS = "letmein"
     FTP_DOWNLOAD_ROOT_DIR = "/mnt/mfs/ftp_downloads"
 
+    # FTP 下载失败重试次数
+    DEFAULT_RETRY_NUMBER = "3"
+
     # 中转服务器挂载目录
     DATA_SOURCE_DIR = ""
     # 中转服务器FTP目录
@@ -173,6 +176,8 @@ class Config(object):
 
     # 语音识别集群处理时，默认分组（应等于语音识别集群服务器数量）
     DEFAULT_SPLIT_NUMBER = 1
+
+
 
 
 if __name__ == "__main__":

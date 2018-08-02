@@ -1835,5 +1835,16 @@ class TestConfig(unittest.TestCase):
             Config.HIVE_CREATE_PARTITIONS_SQL[0:11], "ALTER TABLE")
 
 
+class TestOther(unittest.TestCase):
+
+    def test_logic(self):
+        self.assertTrue(True or 2 > 3)
+        self.assertTrue(False or 2 > 1)
+
+    def test_logic_01(self):
+        arr = range(0, 10)
+        self.assertEqual([8, 9], arr[-2:])
+
+
 if __name__ == "__main__":
     unittest.main()
