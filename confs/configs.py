@@ -72,7 +72,7 @@ class Config(object):
     FTP_DOWNLOAD_ROOT_DIR = "/mnt/mfs/ftp_downloads"
 
     # FTP 下载失败重试次数
-    DEFAULT_RETRY_NUMBER = "3"
+    DEFAULT_RETRY_NUMBER = 3
 
     # 中转服务器挂载目录
     DATA_SOURCE_DIR = ""
