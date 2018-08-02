@@ -282,7 +282,7 @@ class Utils(object):
             finally:
                 ftp_handle.cwd("/")
 
-            if _is_succ or curr_retry > retry:
+            if _is_succ or curr_retry > int(retry):
                 break
 
         return (_is_succ, message)

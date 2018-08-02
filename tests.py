@@ -1845,6 +1845,10 @@ class TestOther(unittest.TestCase):
         arr = range(0, 10)
         self.assertEqual([8, 9], arr[-2:])
 
+    def test_logic_02(self):
+        self.assertEqual(1, int(1))
+        self.assertEqual(1, int("1"))
+
 
 if __name__ == "__main__":
     unittest.main()

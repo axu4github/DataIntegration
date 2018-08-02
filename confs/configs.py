@@ -178,7 +178,5 @@ class Config(object):
     DEFAULT_SPLIT_NUMBER = 1
 
 
-
-
 if __name__ == "__main__":
     print(Config.WAV_TO_PNG_COMMAND)
