@@ -22,7 +22,6 @@ import time
 import base64
 import json
 import copy
-from datetime import datetime
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
