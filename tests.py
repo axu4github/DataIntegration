@@ -1849,6 +1849,21 @@ class TestOther(unittest.TestCase):
         self.assertEqual(1, int(1))
         self.assertEqual(1, int("1"))
 
+    def test_logic_03(self):
+        foos = [{"foo": "bar01"}, {"foo": "bar02"}, {"foo": "bar03"}]
+        def_k = "k"
+        for foo in foos:
+            def_v = []
+            foo[def_k] = def_v
+            if foo["foo"] == "bar03":
+                foo[def_k].append("bar03")
+
+        self.assertEqual(
+            [{'k': [], 'foo': 'bar01'},
+             {'k': [], 'foo': 'bar02'},
+             {'k': ['bar03'], 'foo': 'bar03'}],
+            foos)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -337,7 +337,6 @@ class Processor(LoggableMixin):
     def download_ftp_files(self, content, _attrs=None):
         corrects, incorrects, attrs = [], [], {}
         stt_error_field, _ftp = "stt_errors", None
-        stt_error_field_default = []
 
         if content is not None:
             content = json.loads(content)
@@ -358,7 +357,7 @@ class Processor(LoggableMixin):
             }
             for _file in content:
                 if "DOCUMENTPATH" in _file:
-                    _file[stt_error_field] = stt_error_field_default
+                    _file[stt_error_field] = []
                     (_src, _dest) = Utils.get_download_fpath(
                         _file["DOCUMENTPATH"], dest_dir=dest_dir)
                     self.logger.info("Download File: {0} => {1}.".format(
